@@ -4,16 +4,20 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class Person {
+@Table(name = "person")
+public class Person extends GenericEntity {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(generator = "PERSON_GENERATOR", strategy= GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "cpf")
     private String cpf;
 
+    @Column(name = "email")
     private String email;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)

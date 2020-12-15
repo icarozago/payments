@@ -1,21 +1,23 @@
 package com.icaro.payments.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-public class Account {
+@Table(name = "account")
+public class Account extends GenericEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "ACCOUNT_GENERATOR", strategy = GenerationType.AUTO)
     private Long id;
 
     private Long number;
 
     private BigDecimal amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_person")
+    private Person person;
 
     public Long getId() {
         return id;
