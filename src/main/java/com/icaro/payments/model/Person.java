@@ -1,26 +1,30 @@
 package com.icaro.payments.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table(name = "person")
 public class Person extends GenericEntity {
 
     @Id
     @GeneratedValue(generator = "PERSON_GENERATOR", strategy= GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "name")
+    @NonNull
     private String name;
 
-    @Column(name = "cpf")
+    @NonNull
     private String cpf;
 
-    @Column(name = "email")
+    @NonNull
     private String email;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Account> accounts;
 
     public Long getId() {

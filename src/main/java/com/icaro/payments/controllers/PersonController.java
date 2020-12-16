@@ -2,11 +2,14 @@ package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Person;
 import com.icaro.payments.repositories.PersonRepository;
+import com.icaro.payments.services.IGenericService;
+import com.icaro.payments.services.IPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -14,7 +17,7 @@ import java.util.Optional;
 public class PersonController {
 
     @Autowired
-    private PersonRepository repository;
+    private IPersonService service;
 
     @RequestMapping("/hello")
     public String helloWorld() {
@@ -24,34 +27,30 @@ public class PersonController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Person createPerson(@RequestBody Person person) {
-        repository.save(person);
-
-        return person;
+        return service.create(person);
     }
 
     @GetMapping
     public List<Person> findAll() {
-        return repository.findAll();
+        return service.findAll();
     }
 
     @GetMapping("/{id}")
     public Person findById(@PathVariable long id) {
-        return repository.findById(id).orElse(null);
+        return service.findById(id);
     }
 
     @PutMapping("/{id}")
     public Person update(@PathVariable long id, @RequestBody Person person) {
-        Optional<Person> dBPerson = repository.findById(id);
+        Person dBPerson = service.findById(id);
 
-        if (!dBPerson.isPresent()) {
+        if (Objects.isNull(dBPerson)) {
             return null;
         }
 
-        person.setId(dBPerson.get().getId());
+        person.setId(dBPerson.getId());
 
-        repository.save(person);
-
-        return person;
+        return service.update(person);
     }
 
 //    @GetMapping
