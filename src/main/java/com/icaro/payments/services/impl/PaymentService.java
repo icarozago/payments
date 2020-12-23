@@ -2,8 +2,6 @@ package com.icaro.payments.services.impl;
 
 import com.icaro.payments.model.Payment;
 import com.icaro.payments.repositories.PaymentRepository;
-import com.icaro.payments.services.IAccountService;
-import com.icaro.payments.services.IPaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PaymentService implements IPaymentService {
+public class PaymentService {
 
     @Autowired
     private PaymentRepository repository;
 
     @Autowired
-    private IAccountService accountService;
+    private AccountService accountService;
 
-    @Override
     @Transactional
     public Payment create(Payment payment) {
         payment.setAccount(accountService.findById(payment.getAccount().getId()));
@@ -29,7 +26,6 @@ public class PaymentService implements IPaymentService {
         return repository.save(payment);
     }
 
-    @Override
     @Transactional
     public Payment update(Payment payment) {
 
@@ -48,12 +44,10 @@ public class PaymentService implements IPaymentService {
         return repository.save(payment);
     }
 
-    @Override
     public Payment findById(Long id) {
         return repository.findById(id).orElse(null);
     }
 
-    @Override
     public List<Payment> findAll() {
         return repository.findAll();
     }

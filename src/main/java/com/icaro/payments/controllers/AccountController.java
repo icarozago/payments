@@ -1,20 +1,19 @@
 package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Account;
-import com.icaro.payments.services.IAccountService;
+import com.icaro.payments.services.impl.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
 
     @Autowired
-    private IAccountService service;
+    private AccountService service;
 
     @PostMapping
     public Account create(@RequestBody Account account) {

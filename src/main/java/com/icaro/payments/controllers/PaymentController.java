@@ -1,7 +1,7 @@
 package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Payment;
-import com.icaro.payments.services.IPaymentService;
+import com.icaro.payments.services.impl.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,8 +11,12 @@ import java.util.List;
 @RequestMapping("/payments")
 public class PaymentController {
 
+    private PaymentService service;
+
     @Autowired
-    private IPaymentService service;
+    public PaymentController(PaymentService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public List<Payment> findAll() {

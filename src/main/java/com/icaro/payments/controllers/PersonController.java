@@ -1,27 +1,24 @@
 package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Person;
-import com.icaro.payments.repositories.PersonRepository;
-import com.icaro.payments.services.IGenericService;
-import com.icaro.payments.services.IPersonService;
+import com.icaro.payments.services.impl.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/people")
 public class PersonController {
 
     @Autowired
-    private IPersonService service;
+    private PersonService service;
 
     @RequestMapping("/hello")
     public String helloWorld() {
-        return "Hello Manolo!!";
+        return "Hello Manolo sasssss!!";
     }
 
     @PostMapping

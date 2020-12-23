@@ -1,9 +1,13 @@
 package com.icaro.payments.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Getter @Setter
 public class Payment extends GenericEntity {
 
     @Id
@@ -14,28 +18,4 @@ public class Payment extends GenericEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 }
