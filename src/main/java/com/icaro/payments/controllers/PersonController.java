@@ -2,7 +2,7 @@ package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Person;
 import com.icaro.payments.services.impl.PersonService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +11,14 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/people")
+@RequiredArgsConstructor
 public class PersonController {
 
-    @Autowired
-    private PersonService service;
+    private final PersonService service;
 
     @RequestMapping("/hello")
     public String helloWorld() {
-        return "Hello Manolo sasssss!!";
+        return "Hello Manolo aaaaaa!!";
     }
 
     @PostMapping

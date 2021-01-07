@@ -1,3 +1,5 @@
 *.lst
 *.class
 /target/
+.idea/
+payments.iml

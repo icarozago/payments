@@ -2,16 +2,17 @@ package com.icaro.payments.services.impl;
 
 import com.icaro.payments.model.Person;
 import com.icaro.payments.repositories.PersonRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PersonService {
 
-    @Autowired
-    private PersonRepository repository;
+    private final PersonRepository repository;
 
     public List<Person> findAll() {
         return repository.findAll();

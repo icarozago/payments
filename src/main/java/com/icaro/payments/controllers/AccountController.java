@@ -2,6 +2,7 @@ package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Account;
 import com.icaro.payments.services.impl.AccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,10 +11,10 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/accounts")
+@RequiredArgsConstructor
 public class AccountController {
 
-    @Autowired
-    private AccountService service;
+    private final AccountService service;
 
     @PostMapping
     public Account create(@RequestBody Account account) {

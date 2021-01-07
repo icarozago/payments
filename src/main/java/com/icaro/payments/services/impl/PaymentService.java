@@ -2,7 +2,7 @@ package com.icaro.payments.services.impl;
 
 import com.icaro.payments.model.Payment;
 import com.icaro.payments.repositories.PaymentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
-    @Autowired
-    private PaymentRepository repository;
+    private final PaymentRepository repository;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @Transactional
     public Payment create(Payment payment) {

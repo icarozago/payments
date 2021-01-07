@@ -23,6 +23,7 @@ public class Account extends GenericEntity {
     @NonNull
     private BigDecimal amount;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_person")
     private Person person;

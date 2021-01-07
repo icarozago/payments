@@ -102,7 +102,7 @@
     <orderEntry type="library" name="Maven: org.hdrhistogram:HdrHistogram:2.1.12" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.latencyutils:LatencyUtils:2.0.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.18.12" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.2.8.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.1" level="project" />

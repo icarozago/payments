@@ -2,6 +2,7 @@ package com.icaro.payments.controllers;
 
 import com.icaro.payments.model.Payment;
 import com.icaro.payments.services.impl.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,14 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
-    private PaymentService service;
-
-    @Autowired
-    public PaymentController(PaymentService service) {
-        this.service = service;
-    }
+    private final PaymentService service;
 
     @GetMapping
     public List<Payment> findAll() {
