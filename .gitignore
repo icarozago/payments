@@ -2,4 +2,11 @@
 *.class
 /target/
 .idea/
+.classpath
+.metadata/
+.project
+.settings/
+bin/
 payments.iml
+/.apt_generated/
+/.apt_generated_tests/

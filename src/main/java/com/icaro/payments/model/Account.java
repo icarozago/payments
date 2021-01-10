@@ -6,12 +6,15 @@ import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Getter @Setter
-public class Account extends GenericEntity {
+public class Account implements Serializable {
+
+    private static final long serialVersionUID = 2342342342342342341L;
 
     @Id
     @GeneratedValue(generator = "ACCOUNT_GENERATOR", strategy = GenerationType.AUTO)
@@ -23,8 +26,7 @@ public class Account extends GenericEntity {
     @NonNull
     private BigDecimal amount;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "fk_person")
     private Person person;
 

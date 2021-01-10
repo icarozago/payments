@@ -6,15 +6,18 @@ import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
 @Entity
 @Getter @Setter
-public class Person extends GenericEntity {
+public class Person implements Serializable {
+
+    private static final long serialVersionUID = 2342342342342342341L;
 
     @Id
-    @GeneratedValue(generator = "PERSON_GENERATOR", strategy= GenerationType.AUTO)
+    @GeneratedValue(generator = "PERSON_GENERATOR", strategy= GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
