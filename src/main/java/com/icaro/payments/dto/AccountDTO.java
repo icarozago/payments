@@ -5,10 +5,12 @@ import java.math.BigDecimal;
 import org.springframework.lang.NonNull;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class AccountDTO {
 	
 	private Long id;

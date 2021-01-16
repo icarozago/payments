@@ -1,13 +1,17 @@
 package com.icaro.payments.services.impl;
 
+import com.icaro.payments.dto.PaymentDTO;
 import com.icaro.payments.model.Payment;
 import com.icaro.payments.repositories.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,38 +20,56 @@ public class PaymentService {
     private final PaymentRepository repository;
 
     private final AccountService accountService;
+    
+    private final ModelMapper modelMapper;
 
     @Transactional
-    public Payment create(Payment payment) {
-        payment.setAccount(accountService.findById(payment.getAccount().getId()));
-        payment.getAccount().getAmount().subtract(payment.getValue());
+    public PaymentDTO create(PaymentDTO paymentDTO) {
+    	Payment payment = convertToModel(paymentDTO);
+        payment.getAccount().setAmount(payment.getAccount().getAmount().subtract(paymentDTO.getValue()));
 
-        return repository.save(payment);
+        return convertToDTO(repository.save(payment));
     }
 
     @Transactional
-    public Payment update(Payment payment) {
+    public PaymentDTO update(PaymentDTO paymentDTO) {
 
-        Optional<Payment> dbPayment = repository.findById(payment.getId());
+        Optional<Payment> dbPayment = repository.findById(paymentDTO.getId());
 
         if (!dbPayment.isPresent()) {
             return null;
         }
 
-        if (dbPayment.get().getValue().compareTo(payment.getValue()) > 0) {
-            payment.getAccount().getAmount().add(dbPayment.get().getValue().subtract(payment.getValue()));
+        if (dbPayment.get().getValue().compareTo(paymentDTO.getValue()) > 0) {
+        	dbPayment.get().getAccount().setAmount(dbPayment.get().getAccount().getAmount().add(dbPayment.get().getValue().subtract(paymentDTO.getValue())));
         } else {
-            payment.getAccount().getAmount().subtract(payment.getValue().subtract(dbPayment.get().getValue()));
+        	dbPayment.get().getAccount().setAmount(dbPayment.get().getAccount().getAmount().subtract(paymentDTO.getValue().subtract(dbPayment.get().getValue())));
         }
 
-        return repository.save(payment);
+        return convertToDTO(repository.save(dbPayment.get()));
     }
 
-    public Payment findById(Long id) {
-        return repository.findById(id).orElse(null);
+    public PaymentDTO findById(Long id) {
+    	Payment payment = repository.findById(id).orElse(null);
+        return payment != null ? convertToDTO(payment) : null;
     }
 
-    public List<Payment> findAll() {
-        return repository.findAll();
+    public List<PaymentDTO> findAll() {
+        return repository.findAll()
+        		.stream()
+        		.map(this::convertToDTO)
+        		.collect(Collectors.toList());
+    }
+    
+    private Payment convertToModel(PaymentDTO paymentDTO) {
+    	Payment payment = modelMapper.map(paymentDTO, Payment.class);
+    	payment.setAccount(accountService.findEntityById(paymentDTO.getAccountId()));
+    	return payment;
+    }
+    
+    private PaymentDTO convertToDTO(Payment payment) {
+    	PaymentDTO paymentDTO = modelMapper.map(payment, PaymentDTO.class);
+    	paymentDTO.setAccountId(payment.getAccount().getId());
+    	return paymentDTO;
     }
 }

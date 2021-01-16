@@ -1,32 +1,53 @@
 package com.icaro.payments.services.impl;
 
+import com.icaro.payments.dto.PersonDTO;
 import com.icaro.payments.model.Person;
 import com.icaro.payments.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PersonService {
 
     private final PersonRepository repository;
+    
+    private final ModelMapper modelMapper;
 
-    public List<Person> findAll() {
-        return repository.findAll();
+    public List<PersonDTO> findAll() {
+        return repository.findAll()
+        		.stream()
+        		.map(this::convertToDTO)
+        		.collect(Collectors.toList());
     }
 
-    public Person findById(Long id) {
-        return repository.findById(id).orElse(null);
+    public PersonDTO findById(Long id) {
+    	Person person = findEntityById(id);
+        return person != null ? convertToDTO(person) : null;
     }
 
-    public Person create(Person person) {
-        return repository.save(person);
+    public PersonDTO create(PersonDTO personDTO) {
+        return convertToDTO(repository.save(convertToModel(personDTO)));
     }
 
-    public Person update(Person person) {
-        return repository.save(person);
+    public PersonDTO update(PersonDTO personDTO) {
+        return convertToDTO(repository.save(convertToModel(personDTO)));
+    }
+    
+    public Person findEntityById(Long id) {
+    	return repository.findById(id).orElse(null);
+    }
+    
+    private Person convertToModel(PersonDTO personDTO) {
+    	return modelMapper.map(personDTO, Person.class);
+    }
+    
+    private PersonDTO convertToDTO(Person person) {
+    	return modelMapper.map(person, PersonDTO.class);
     }
 }

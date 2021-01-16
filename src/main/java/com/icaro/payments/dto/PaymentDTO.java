@@ -2,21 +2,23 @@ package com.icaro.payments.dto;
 
 import java.math.BigDecimal;
 
-import com.sun.istack.NotNull;
+import org.springframework.lang.NonNull;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class PaymentDTO {
 
 	private Long id;
 	
-	@NotNull
+	@NonNull
 	private BigDecimal value;
 	
-	@NotNull
+	@NonNull
 	private Long accountId;
 	
 }
