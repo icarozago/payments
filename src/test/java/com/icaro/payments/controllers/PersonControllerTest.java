@@ -1,64 +1,28 @@
-package com.icaro.payments;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
+package com.icaro.payments.controllers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.hamcrest.Matchers.is;
-
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.icaro.payments.containers.CustomPostgreSQLContainer;
-import com.icaro.payments.containers.UserRepositoryTCIntegrationTest;
-import com.icaro.payments.controllers.PersonController;
+import com.icaro.payments.PaymentApplicationTest;
 import com.icaro.payments.dto.PersonDTO;
-import com.icaro.payments.services.impl.PersonService;
 
+class PersonControllerTest extends PaymentApplicationTest {
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(controllers = PersonController.class)
-class PersonControllerTest {
-
-	private MockMvc mockMvc;
-	
-	private ObjectMapper objectMapper;
-	
 	private PersonDTO personDTO;
 	
 	private static final String PEOPLE_URL = "/people";
 	
-	@ClassRule
-    public static PostgreSQLContainer postgreSQLContainer = CustomPostgreSQLContainer.getInstance();
-	
-	@MockBean
-	private PersonService service;
-	
-	@Autowired
-	public PersonControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
-		this.mockMvc = mockMvc;
-		this.objectMapper = objectMapper;
+	public PersonControllerTest() {
 		this.personDTO = new PersonDTO();
 		personDTO.setName("Novo Nome");
 		personDTO.setCpf("12345678915");
 		personDTO.setEmail("naotenho@gmail.com");
-		
-		postgreSQLContainer.start();
 	}
 	
 	@Test
@@ -113,4 +77,5 @@ class PersonControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
+
 }
