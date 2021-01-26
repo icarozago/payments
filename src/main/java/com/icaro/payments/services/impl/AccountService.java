@@ -29,13 +29,13 @@ public class AccountService {
     }
 
     public AccountDTO findById(Long id) {
-        Account account = findEntityById(id);
+        Account account = repository.findById(id).orElse(null);
 		return account != null ? convertToDTO(account) : null;
     }
 
     public AccountDTO create(AccountDTO accountDTO) {
     	Account account = convertToModel(accountDTO);
-        account.setPerson(personService.findEntityById(accountDTO.getPersonId()));
+        account.setPerson(personService.convertToModel(personService.findById(accountDTO.getPersonId())));
 
         return convertToDTO(repository.save(account));
     }
@@ -44,21 +44,17 @@ public class AccountService {
         return convertToDTO(repository.save(convertToModel(accountDTO)));
     }
     
-    public Account findEntityById(Long id) {
-    	return repository.findById(id).orElse(null);
-    }
-    
-    private Account convertToModel(AccountDTO accountDTO) {
+    public Account convertToModel(AccountDTO accountDTO) {
     	Account account = modelMapper.map(accountDTO, Account.class);
     	
     	if (accountDTO.getPersonId() != null) {
-    		account.setPerson(personService.findEntityById(accountDTO.getPersonId()));
+    		account.setPerson(personService.convertToModel(personService.findById(accountDTO.getPersonId())));
     	}
     	
     	return account;
     }
     
-    private AccountDTO convertToDTO(Account account) {
+    public AccountDTO convertToDTO(Account account) {
     	AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);
     	accountDTO.setPersonId(account.getPerson().getId());
     	return accountDTO;

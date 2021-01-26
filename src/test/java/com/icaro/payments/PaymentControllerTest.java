@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icaro.payments.controllers.PaymentController;
 import com.icaro.payments.dto.PaymentDTO;
+import com.icaro.payments.services.impl.PaymentService;
 import com.icaro.payments.services.impl.PersonService;
 
 @RunWith(SpringRunner.class)
@@ -34,7 +35,7 @@ class PaymentControllerTest {
 	private static final String PAYMENT_URL = "/payments";
 	
 	@MockBean
-	private PersonService service;
+	private PaymentService service;
 	
 	@Autowired
 	public PaymentControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {

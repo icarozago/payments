@@ -27,6 +27,7 @@ public class PaymentService {
     public PaymentDTO create(PaymentDTO paymentDTO) {
     	Payment payment = convertToModel(paymentDTO);
         payment.getAccount().setAmount(payment.getAccount().getAmount().subtract(paymentDTO.getValue()));
+        accountService.update(accountService.convertToDTO(payment.getAccount()));
 
         return convertToDTO(repository.save(payment));
     }
@@ -45,6 +46,8 @@ public class PaymentService {
         } else {
         	dbPayment.get().getAccount().setAmount(dbPayment.get().getAccount().getAmount().subtract(paymentDTO.getValue().subtract(dbPayment.get().getValue())));
         }
+        
+        accountService.update(accountService.convertToDTO(dbPayment.get().getAccount()));
 
         return convertToDTO(repository.save(dbPayment.get()));
     }
@@ -63,7 +66,7 @@ public class PaymentService {
     
     private Payment convertToModel(PaymentDTO paymentDTO) {
     	Payment payment = modelMapper.map(paymentDTO, Payment.class);
-    	payment.setAccount(accountService.findEntityById(paymentDTO.getAccountId()));
+    	payment.setAccount(accountService.convertToModel(accountService.findById(paymentDTO.getAccountId())));
     	return payment;
     }
     

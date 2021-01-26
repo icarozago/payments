@@ -27,7 +27,7 @@ public class PersonService {
     }
 
     public PersonDTO findById(Long id) {
-    	Person person = findEntityById(id);
+    	Person person = repository.findById(id).orElse(null);
         return person != null ? convertToDTO(person) : null;
     }
 
@@ -39,15 +39,11 @@ public class PersonService {
         return convertToDTO(repository.save(convertToModel(personDTO)));
     }
     
-    public Person findEntityById(Long id) {
-    	return repository.findById(id).orElse(null);
-    }
-    
-    private Person convertToModel(PersonDTO personDTO) {
+    public Person convertToModel(PersonDTO personDTO) {
     	return modelMapper.map(personDTO, Person.class);
     }
     
-    private PersonDTO convertToDTO(Person person) {
+    public PersonDTO convertToDTO(Person person) {
     	return modelMapper.map(person, PersonDTO.class);
     }
 }

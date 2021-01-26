@@ -8,7 +8,9 @@ import org.springframework.lang.NonNull;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
@@ -32,5 +34,5 @@ public class Account implements Serializable {
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Payment> payments;
+    private Set<Payment> payments = new HashSet<>();
 }

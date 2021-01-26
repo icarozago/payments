@@ -2,10 +2,14 @@ package com.icaro.payments;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,10 +19,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.hamcrest.Matchers.is;
 
+import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.icaro.payments.containers.CustomPostgreSQLContainer;
+import com.icaro.payments.containers.UserRepositoryTCIntegrationTest;
 import com.icaro.payments.controllers.PersonController;
 import com.icaro.payments.dto.PersonDTO;
 import com.icaro.payments.services.impl.PersonService;
@@ -36,6 +43,9 @@ class PersonControllerTest {
 	
 	private static final String PEOPLE_URL = "/people";
 	
+	@ClassRule
+    public static PostgreSQLContainer postgreSQLContainer = CustomPostgreSQLContainer.getInstance();
+	
 	@MockBean
 	private PersonService service;
 	
@@ -47,15 +57,21 @@ class PersonControllerTest {
 		personDTO.setName("Novo Nome");
 		personDTO.setCpf("12345678915");
 		personDTO.setEmail("naotenho@gmail.com");
+		
+		postgreSQLContainer.start();
 	}
 	
 	@Test
 	void createNewPersonWithSuccess() throws Exception {
-		mockMvc.perform(post(PEOPLE_URL)
+		MvcResult andReturn = mockMvc.perform(post(PEOPLE_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(personDTO)))
-				.andExpect(status().isCreated());
-//				.andExpect(jsonPath("$.name", is(person.getName())));
+				.andExpect(status().isCreated())
+				.andReturn();
+//				.andExpect(jsonPath("$.name", is(personDTO.getName())));
+		
+		String a = andReturn.getResponse().getContentAsString();
+		andReturn.getResponse().getContentAsString();
 	}
 	
 	@Test
