@@ -5,6 +5,7 @@ import com.icaro.payments.services.impl.AccountService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class AccountController {
     private final AccountService service;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public AccountDTO create(@RequestBody AccountDTO accountDTO) {
         return service.create(accountDTO);
     }

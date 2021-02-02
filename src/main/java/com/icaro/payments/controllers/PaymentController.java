@@ -4,6 +4,7 @@ import com.icaro.payments.dto.PaymentDTO;
 import com.icaro.payments.services.impl.PaymentService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class PaymentController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public PaymentDTO create(@RequestBody PaymentDTO paymentDTO) {
         return service.create(paymentDTO);
     }
@@ -32,6 +34,7 @@ public class PaymentController {
 
     @PutMapping("/{id}")
     public PaymentDTO update(@PathVariable Long id, @RequestBody PaymentDTO paymentDTO) {
+    	paymentDTO.setId(id);
         return service.update(paymentDTO);
     }
 }

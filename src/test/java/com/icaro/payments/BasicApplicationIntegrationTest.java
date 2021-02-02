@@ -14,7 +14,7 @@ import com.icaro.payments.containers.CustomPostgreSQLContainer;
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class PaymentApplicationTest {
+public abstract class BasicApplicationIntegrationTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
@@ -30,5 +30,7 @@ public abstract class PaymentApplicationTest {
 			postgresSQLContainer.start();
 		}
 	}
+	
+	
 
 }

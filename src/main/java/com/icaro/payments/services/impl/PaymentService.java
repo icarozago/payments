@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,12 +42,8 @@ public class PaymentService {
         if (!dbPayment.isPresent()) {
             return null;
         }
-
-        if (dbPayment.get().getValue().compareTo(paymentDTO.getValue()) > 0) {
-        	dbPayment.get().getAccount().setAmount(dbPayment.get().getAccount().getAmount().add(dbPayment.get().getValue().subtract(paymentDTO.getValue())));
-        } else {
-        	dbPayment.get().getAccount().setAmount(dbPayment.get().getAccount().getAmount().subtract(paymentDTO.getValue().subtract(dbPayment.get().getValue())));
-        }
+        
+        reprocessPaymentValue(dbPayment.get(), paymentDTO.getValue());
         
         accountService.update(accountService.convertToDTO(dbPayment.get().getAccount()));
 
@@ -74,5 +72,15 @@ public class PaymentService {
     	PaymentDTO paymentDTO = modelMapper.map(payment, PaymentDTO.class);
     	paymentDTO.setAccountId(payment.getAccount().getId());
     	return paymentDTO;
+    }
+    
+    private void reprocessPaymentValue(Payment payment, BigDecimal newValue) {
+    	if (payment.getValue().compareTo(newValue) > 0) {
+        	payment.getAccount().setAmount(payment.getAccount().getAmount().add(payment.getValue().subtract(newValue)));
+        } else {
+        	payment.getAccount().setAmount(payment.getAccount().getAmount().subtract(newValue.subtract(payment.getValue())));
+        }
+        
+    	payment.setValue(newValue);
     }
 }

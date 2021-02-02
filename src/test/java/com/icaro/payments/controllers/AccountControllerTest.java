@@ -5,54 +5,51 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.icaro.payments.controllers.AccountController;
+import com.icaro.payments.BasicApplicationIntegrationTest;
 import com.icaro.payments.dto.AccountDTO;
-import com.icaro.payments.services.impl.PersonService;
+import com.icaro.payments.dto.PersonDTO;
+import com.icaro.payments.utils.TestUtils;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(controllers = AccountController.class)
-class AccountControllerTest {
-	
-	private MockMvc mockMvc;
-	
-	private ObjectMapper objectMapper;
+@TestMethodOrder(OrderAnnotation.class)
+class AccountControllerTest extends BasicApplicationIntegrationTest {
 	
 	private AccountDTO accountDTO;
 	
-	private static final String ACCOUNT_URL = "/accounts";
+	private PersonDTO personDTO;
 	
-	@MockBean
-	private PersonService service;
+	public static final String ACCOUNT_URL = "/accounts";
 	
-	@Autowired
-	public AccountControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
-		this.mockMvc = mockMvc;
-		this.objectMapper = objectMapper;
-		this.accountDTO = new AccountDTO();
-		accountDTO.setAmount(new BigDecimal(100));
-		accountDTO.setNumber(12345678915L);
-		accountDTO.setPersonId(1L);
+	public AccountControllerTest() {
+		this.personDTO = TestUtils.getPerson();
+		
+		this.accountDTO = TestUtils.getAccount();
 	}
 	
 	@Test
+	@Order(1)
 	void createNewAccountWithSuccess() throws Exception {
+		mockMvc.perform(post(PersonControllerTest.PEOPLE_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+				.andExpect(status().isCreated());
+		
 		mockMvc.perform(post(ACCOUNT_URL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(accountDTO)))
-				.andExpect(status().isCreated());
-//				.andExpect(jsonPath("$.number", is(accountDTO.getNumber())));
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.number", is(accountDTO.getNumber())));
 	}
 	
 	@Test
@@ -71,27 +68,28 @@ class AccountControllerTest {
 	
 	@Test
 	void updateAccountWithSuccess() throws Exception {
-		mockMvc.perform(post(ACCOUNT_URL)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(accountDTO)))
-				.andExpect(status().isCreated());
+		accountDTO.setAmount(new BigDecimal(200));
 		
 		mockMvc.perform(put(ACCOUNT_URL + "/1")
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(accountDTO)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.amount", is(200)));
 	}
 	
 	@Test
 	void findAllAccountsWithSuccess() throws Exception {
 		mockMvc.perform(get(ACCOUNT_URL)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(1)));
 	}
 
 	@Test
 	void findAccountByIdWithSuccess() throws Exception {
 		mockMvc.perform(get(ACCOUNT_URL + "/1")
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.number", is(accountDTO.getNumber())));
 	}
 }
