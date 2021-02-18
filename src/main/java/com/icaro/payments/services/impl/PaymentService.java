@@ -62,13 +62,13 @@ public class PaymentService {
         		.collect(Collectors.toList());
     }
     
-    private Payment convertToModel(PaymentDTO paymentDTO) {
+    public Payment convertToModel(PaymentDTO paymentDTO) {
     	Payment payment = modelMapper.map(paymentDTO, Payment.class);
     	payment.setAccount(accountService.convertToModel(accountService.findById(paymentDTO.getAccountId())));
     	return payment;
     }
     
-    private PaymentDTO convertToDTO(Payment payment) {
+    public PaymentDTO convertToDTO(Payment payment) {
     	PaymentDTO paymentDTO = modelMapper.map(payment, PaymentDTO.class);
     	paymentDTO.setAccountId(payment.getAccount().getId());
     	return paymentDTO;

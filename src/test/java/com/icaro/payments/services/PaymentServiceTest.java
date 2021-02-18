@@ -6,34 +6,35 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
+import com.icaro.payments.dto.AccountDTO;
 import com.icaro.payments.dto.PaymentDTO;
 import com.icaro.payments.model.Account;
 import com.icaro.payments.model.Payment;
-import com.icaro.payments.repositories.AccountRepository;
 import com.icaro.payments.repositories.PaymentRepository;
+import com.icaro.payments.services.impl.AccountService;
 import com.icaro.payments.services.impl.PaymentService;
 import com.icaro.payments.utils.TestUtils;
 
-import lombok.AllArgsConstructor;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
 
 	@Mock
 	private PaymentRepository paymentRepository;
 	
 	@Mock
-	private AccountRepository accountRepository;
+	private AccountService accountService;
 	
-	@Autowired
+	@Mock
+	private ModelMapper modelMapper;
+	
+	@InjectMocks
 	private PaymentService service;
 	
 	@Test
@@ -42,20 +43,30 @@ class PaymentServiceTest {
 		account.setAmount(new BigDecimal(80));
 		Payment payment = new Payment();
 		payment.setAccount(account);
-		payment.setValue(new BigDecimal(20));
+		payment.setValue(new BigDecimal(30));
 		
 		Account newAccount = new Account();
-		newAccount.setAmount(new BigDecimal(30));
+		newAccount.setAmount(new BigDecimal(90));
+		newAccount.setId(1L);
 		Payment newPayment = new Payment();
 		newPayment.setAccount(newAccount);
-		newPayment.setValue(new BigDecimal(70));
+		newPayment.setValue(new BigDecimal(20));
 		
-		Mockito.when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
-		Mockito.when(accountRepository.save(newAccount)).thenReturn(newAccount);
-		Mockito.when(paymentRepository.save(newPayment)).thenReturn(newPayment);
+		PaymentDTO paymentDTO = TestUtils.getPayment();
+		paymentDTO.setId(1L);
 		
-		PaymentDTO updatedPayment = service.update(TestUtils.getPayment());
+		AccountDTO accountDTO = new AccountDTO();
+		accountDTO.setAmount(new BigDecimal(90));
 		
-		assertEquals(newPayment.getValue(), updatedPayment.getValue());
+		Mockito.when(paymentRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(payment));
+		Mockito.when(accountService.convertToDTO(Mockito.any(Account.class))).thenReturn(accountDTO);
+		Mockito.when(accountService.update(Mockito.any(AccountDTO.class))).thenReturn(accountDTO);
+		Mockito.when(paymentRepository.save(Mockito.any(Payment.class))).thenReturn(newPayment);
+		Mockito.when(modelMapper.map(Mockito.any(Payment.class), Mockito.any())).thenReturn(paymentDTO);
+		
+		PaymentDTO updatedPayment = service.update(paymentDTO);
+		
+		assertEquals(paymentDTO.getValue(), updatedPayment.getValue());
+		assertEquals(newPayment.getAccount().getAmount(), accountDTO.getAmount());
 	}
 }
