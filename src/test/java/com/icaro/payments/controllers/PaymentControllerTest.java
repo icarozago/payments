@@ -71,6 +71,26 @@ class PaymentControllerTest extends BasicApplicationIntegrationTest {
 	}
 	
 	@Test
+	void createNewPaymentWithoutValue() throws Exception {
+		paymentDTO.setValue(null);
+		mockMvc.perform(post(PAYMENT_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(paymentDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("payment.value.required")));
+	}
+
+	@Test
+	void createNewPaymentWithoutAccountId() throws Exception {
+		paymentDTO.setAccountId(null);
+		mockMvc.perform(post(PAYMENT_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(paymentDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("payment.accountId.required")));
+	}
+	
+	@Test
 	void updatePaymentWithoutBody() throws Exception {
 		mockMvc.perform(put(PAYMENT_URL + "/1")
 				.contentType(MediaType.APPLICATION_JSON))

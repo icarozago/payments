@@ -60,7 +60,7 @@ class PaymentServiceTest {
 		
 		Mockito.when(paymentRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(payment));
 		Mockito.when(accountService.convertToDTO(Mockito.any(Account.class))).thenReturn(accountDTO);
-		Mockito.when(accountService.update(Mockito.any(AccountDTO.class))).thenReturn(accountDTO);
+		Mockito.when(accountService.createOrUpdate(Mockito.any(AccountDTO.class))).thenReturn(accountDTO);
 		Mockito.when(paymentRepository.save(Mockito.any(Payment.class))).thenReturn(newPayment);
 		Mockito.when(modelMapper.map(Mockito.any(Payment.class), Mockito.any())).thenReturn(paymentDTO);
 		

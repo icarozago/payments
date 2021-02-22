@@ -1,5 +1,7 @@
 package com.icaro.payments;
 
+import java.util.ResourceBundle;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,6 +23,9 @@ public abstract class BasicApplicationIntegrationTest {
 
 	@Autowired
 	protected ObjectMapper objectMapper;
+	
+	@Autowired
+	protected ResourceBundle bundle;
 
 	static {
 

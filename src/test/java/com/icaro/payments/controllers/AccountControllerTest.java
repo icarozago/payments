@@ -60,6 +60,38 @@ class AccountControllerTest extends BasicApplicationIntegrationTest {
 	}
 	
 	@Test
+	void createNewAccountWithoutAmount() throws Exception {
+		accountDTO.setAmount(null);
+		mockMvc.perform(post(ACCOUNT_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(accountDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("account.amount.required")));
+	}
+	
+	@Test
+	@Order(4)
+	void createNewAccountWithoutPersonId() throws Exception {
+		accountDTO.setPersonId(null);
+		mockMvc.perform(post(ACCOUNT_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(accountDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("account.personId.required")));
+	}
+	
+	@Test
+	@Order(5)
+	void createNewAccountWithInvalidNumber() throws Exception {
+		accountDTO.setNumber(-1L);
+		mockMvc.perform(post(ACCOUNT_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(accountDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("account.number.invalid")));
+	}
+	
+	@Test
 	void updateAccountWithoutBody() throws Exception {
 		mockMvc.perform(put(ACCOUNT_URL + "/1")
 				.contentType(MediaType.APPLICATION_JSON))
@@ -67,6 +99,7 @@ class AccountControllerTest extends BasicApplicationIntegrationTest {
 	}
 	
 	@Test
+	@Order(3)
 	void updateAccountWithSuccess() throws Exception {
 		accountDTO.setAmount(new BigDecimal(200));
 		
@@ -86,6 +119,7 @@ class AccountControllerTest extends BasicApplicationIntegrationTest {
 	}
 
 	@Test
+	@Order(2)
 	void findAccountByIdWithSuccess() throws Exception {
 		mockMvc.perform(get(ACCOUNT_URL + "/1")
 				.contentType(MediaType.APPLICATION_JSON))

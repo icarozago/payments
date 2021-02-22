@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.icaro.payments.BasicApplicationIntegrationTest;
 import com.icaro.payments.dto.PersonDTO;
@@ -46,6 +47,37 @@ class PersonControllerTest extends BasicApplicationIntegrationTest {
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
 	}
+
+	@Test
+	void createNewPersonWithEmptyName() throws Exception {
+		personDTO.setName("");
+		mockMvc.perform(post(PEOPLE_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("person.name.required")));
+	}
+	
+	@Test
+	void createNewPersonWithEmptyCpf() throws Exception {
+		personDTO.setCpf("");
+		mockMvc.perform(post(PEOPLE_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("person.cpf.required")));
+	}
+	
+	@Test
+	@Order(3)
+	void createNewPersonWithEmptyEmail() throws Exception {
+		personDTO.setEmail("");
+		mockMvc.perform(post(PEOPLE_URL)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(personDTO)))
+				.andExpect(status().isBadRequest())
+				.andExpect(status().reason(bundle.getString("person.email.required")));
+	}
 	
 	@Test
 	void updatePersonWithoutBody() throws Exception {
@@ -55,6 +87,7 @@ class PersonControllerTest extends BasicApplicationIntegrationTest {
 	}
 	
 	@Test
+	@Order(2)
 	void updatePersonWithSuccess() throws Exception {
 		String newName = "OTHER NAME";
 		personDTO.setName(newName);

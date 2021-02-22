@@ -6,13 +6,15 @@ import com.icaro.payments.repositories.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,35 +26,34 @@ public class PaymentService {
     private final AccountService accountService;
     
     private final ModelMapper modelMapper;
+    
+    private final ResourceBundle bundle;
 
     @Transactional
     public PaymentDTO create(PaymentDTO paymentDTO) {
+    	validatePaymentDTO(paymentDTO);
     	Payment payment = convertToModel(paymentDTO);
         payment.getAccount().setAmount(payment.getAccount().getAmount().subtract(paymentDTO.getValue()));
-        accountService.update(accountService.convertToDTO(payment.getAccount()));
+        accountService.createOrUpdate(accountService.convertToDTO(payment.getAccount()));
 
         return convertToDTO(repository.save(payment));
     }
 
     @Transactional
     public PaymentDTO update(PaymentDTO paymentDTO) {
-
-        Optional<Payment> dbPayment = repository.findById(paymentDTO.getId());
-
-        if (!dbPayment.isPresent()) {
-            return null;
-        }
+    	validatePaymentDTO(paymentDTO);
+        Payment dbPayment = convertToModel(findById(paymentDTO.getId()));        
+        reprocessPaymentValue(dbPayment, paymentDTO.getValue());        
+        accountService.createOrUpdate(accountService.convertToDTO(dbPayment.getAccount()));
         
-        reprocessPaymentValue(dbPayment.get(), paymentDTO.getValue());
-        
-        accountService.update(accountService.convertToDTO(dbPayment.get().getAccount()));
-
-        return convertToDTO(repository.save(dbPayment.get()));
+        return convertToDTO(repository.save(dbPayment));
     }
 
     public PaymentDTO findById(Long id) {
-    	Payment payment = repository.findById(id).orElse(null);
-        return payment != null ? convertToDTO(payment) : null;
+    	Payment payment = repository.findById(id)
+    			.orElseThrow(() ->
+    			new ResponseStatusException(HttpStatus.NOT_FOUND, bundle.getString("payment.notFound")));
+        return convertToDTO(payment);
     }
 
     public List<PaymentDTO> findAll() {
@@ -82,5 +83,15 @@ public class PaymentService {
         }
         
     	payment.setValue(newValue);
+    }
+    
+    private void validatePaymentDTO(PaymentDTO paymentDTO) {
+    	if (paymentDTO.getAccountId() == null) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, bundle.getString("payment.accountId.required"));
+    	}
+    	
+    	if (paymentDTO.getValue() == null) {
+    		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, bundle.getString("payment.value.required"));
+    	}
     }
 }

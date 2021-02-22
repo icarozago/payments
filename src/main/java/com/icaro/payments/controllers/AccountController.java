@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/accounts")
@@ -21,7 +20,7 @@ public class AccountController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AccountDTO create(@RequestBody AccountDTO accountDTO) {
-        return service.create(accountDTO);
+        return service.createOrUpdate(accountDTO);
     }
 
     @GetMapping
@@ -36,14 +35,7 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public AccountDTO update(@PathVariable long id, @RequestBody AccountDTO accountDTO) {
-        AccountDTO dBAccount = service.findById(id);
-
-        if (Objects.isNull(dBAccount)) {
-            return null;
-        }
-
-        accountDTO.setId(dBAccount.getId());
-
-        return service.update(accountDTO);
+        accountDTO.setId(id);
+        return service.createOrUpdate(accountDTO);
     }
 }

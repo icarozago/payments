@@ -6,10 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/people")
@@ -25,8 +23,8 @@ public class PersonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PersonDTO createPerson(@RequestBody PersonDTO personDTO) throws ResponseStatusException {
-        return service.create(personDTO);
+    public PersonDTO createPerson(@RequestBody PersonDTO personDTO) {
+        return service.createOrUpdate(personDTO);
     }
 
     @GetMapping
@@ -35,15 +33,13 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    public PersonDTO findById(@PathVariable long id) throws ResponseStatusException {
+    public PersonDTO findById(@PathVariable long id) {
         return service.findById(id);
     }
 
     @PutMapping("/{id}")
     public PersonDTO update(@PathVariable long id, @RequestBody PersonDTO personDTO) {
-        PersonDTO dBPerson = service.findById(id);
-        personDTO.setId(dBPerson.getId());
-
-        return service.update(personDTO);
+        personDTO.setId(id);
+        return service.createOrUpdate(personDTO);
     }
 }

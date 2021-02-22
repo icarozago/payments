@@ -24,7 +24,7 @@ public class PersonService {
     
     private final ModelMapper modelMapper;
     
-    private final ResourceBundle bundle = ResourceBundle.getBundle("resource");
+    private final ResourceBundle bundle;
 
     public List<PersonDTO> findAll() {
         return repository.findAll()
@@ -33,19 +33,14 @@ public class PersonService {
         		.collect(Collectors.toList());
     }
 
-    public PersonDTO findById(Long id) throws ResponseStatusException {
+    public PersonDTO findById(Long id) {
     	Person person = repository.findById(id)
     			.orElseThrow(() -> 
     			new ResponseStatusException(HttpStatus.NOT_FOUND, bundle.getString("person.notFound")));
         return convertToDTO(person);
     }
 
-    public PersonDTO create(PersonDTO personDTO) throws ResponseStatusException {
-    	validatePerson(personDTO);
-        return convertToDTO(repository.save(convertToModel(personDTO)));
-    }
-
-    public PersonDTO update(PersonDTO personDTO) {
+    public PersonDTO createOrUpdate(PersonDTO personDTO) {
     	validatePerson(personDTO);
         return convertToDTO(repository.save(convertToModel(personDTO)));
     }
