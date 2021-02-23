@@ -6,6 +6,4 @@ db:
     POSTGRES_DB: teste
 payments:
   build: .
-  ports:
-    - 30001:30001
   net: host
