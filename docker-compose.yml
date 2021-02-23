@@ -1,0 +1,11 @@
+db:
+  image: postgres
+  net: host 
+  environment:
+    POSTGRES_PASSWORD: password
+    POSTGRES_DB: teste
+payments:
+  build: .
+  ports:
+    - 30001:30001
+  net: host
