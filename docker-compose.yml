@@ -1,3 +1,14 @@
+zookeeper:
+  image: 'bitnami/zookeeper:latest'
+  net: host
+  environment:
+    ALLOW_ANONYMOUS_LOGIN: "yes"
+kafka:
+  image: 'bitnami/kafka:latest'
+  net: host
+  environment:
+    ALLOW_PLAINTEXT_LISTENER: "yes"
+    KAFKA_CFG_ZOOKEEPER_CONNECT: localhost:2181
 db:
   image: postgres
   net: host 

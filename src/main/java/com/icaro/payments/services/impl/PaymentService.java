@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,6 +29,10 @@ public class PaymentService {
     private final ModelMapper modelMapper;
     
     private final ResourceBundle bundle;
+    
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    
+    private static final String KAFKA_TOPIC_NAME = "payments";
 
     @Transactional
     public PaymentDTO create(PaymentDTO paymentDTO) {
@@ -35,6 +40,8 @@ public class PaymentService {
     	Payment payment = convertToModel(paymentDTO);
         payment.getAccount().setAmount(payment.getAccount().getAmount().subtract(paymentDTO.getValue()));
         accountService.createOrUpdate(accountService.convertToDTO(payment.getAccount()));
+        
+        kafkaTemplate.send(KAFKA_TOPIC_NAME, payment.getKafkaMessage());
 
         return convertToDTO(repository.save(payment));
     }
@@ -42,9 +49,12 @@ public class PaymentService {
     @Transactional
     public PaymentDTO update(PaymentDTO paymentDTO) {
     	validatePaymentDTO(paymentDTO);
-        Payment dbPayment = convertToModel(findById(paymentDTO.getId()));        
-        reprocessPaymentValue(dbPayment, paymentDTO.getValue());        
+        Payment dbPayment = convertToModel(findById(paymentDTO.getId()));
+        BigDecimal oldValue = dbPayment.getValue();
+        reprocessPaymentValue(dbPayment, paymentDTO.getValue());
         accountService.createOrUpdate(accountService.convertToDTO(dbPayment.getAccount()));
+        
+        kafkaTemplate.send(KAFKA_TOPIC_NAME, dbPayment.getKafkaMessage(oldValue));
         
         return convertToDTO(repository.save(dbPayment));
     }

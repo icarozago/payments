@@ -21,4 +21,27 @@ public class Payment implements Serializable {
 
     @ManyToOne
     private Account account;
+    
+    public String getKafkaMessage(BigDecimal... oldValue) {
+    	StringBuilder result = new StringBuilder("{");
+    	result.append("value: ")
+    	.append(value)
+    	.append(", account: ")
+    	.append(account.getNumber())
+    	.append(", amount: ")
+    	.append(account.getAmount())
+    	.append(", email: ")
+    	.append(account.getPerson().getEmail())
+    	.append(", personName: ")
+    	.append(account.getPerson().getName());
+    	
+    	if (oldValue != null) {
+    		result.append(", oldValue: ")
+    		.append(oldValue);
+    	}
+    	
+    	result.append("}");
+    	
+    	return result.toString();
+    }
 }
