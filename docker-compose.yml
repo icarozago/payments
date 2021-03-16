@@ -16,5 +16,5 @@ db:
     POSTGRES_PASSWORD: password
     POSTGRES_DB: teste
 payments:
-  build: .
+  build: ./payments
   net: host

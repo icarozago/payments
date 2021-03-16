@@ -24,20 +24,21 @@ public class Payment implements Serializable {
     
     public String getKafkaMessage(BigDecimal... oldValue) {
     	StringBuilder result = new StringBuilder("{");
-    	result.append("value: ")
+    	result.append("\"value\": ")
     	.append(value)
-    	.append(", account: ")
+    	.append(", \"account\": ")
     	.append(account.getNumber())
-    	.append(", amount: ")
+    	.append(", \"amount\": ")
     	.append(account.getAmount())
-    	.append(", email: ")
+    	.append(", \"email\": \"")
     	.append(account.getPerson().getEmail())
-    	.append(", personName: ")
-    	.append(account.getPerson().getName());
+    	.append("\", \"personName\": \"")
+    	.append(account.getPerson().getName())
+    	.append("\"");
     	
-    	if (oldValue != null) {
-    		result.append(", oldValue: ")
-    		.append(oldValue);
+    	if (oldValue.length > 0) {
+    		result.append(", \"oldValue\": ")
+    		.append(oldValue[0]);
     	}
     	
     	result.append("}");
