@@ -18,3 +18,8 @@ db:
 payments:
   build: ./payments
   net: host
+mail_sender:
+  build: ./mail-sender
+  net: host
+  environment:
+    MAIL_PASSWORD: $MAIL_PASSWORD

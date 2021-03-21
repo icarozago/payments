@@ -4,4 +4,5 @@ mvn clean package -DskipTests
 cd ../mail-sender
 mvn clean package -DskipTests
 cd ..
-docker-compose up -d
+docker-compose down
+docker-compose up -d --build
