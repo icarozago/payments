@@ -23,3 +23,10 @@ mail_sender:
   net: host
   environment:
     MAIL_PASSWORD: $MAIL_PASSWORD
+logstash:
+  image: docker.elastic.co/logstash/logstash:7.12.0
+  net: host
+  environment:
+    MAIL_PASSWORD: $MAIL_PASSWORD
+  volumes:
+    - /home/icaropz/payments/logstash/pipe.conf:/usr/share/logstash/pipeline/logstash.conf
